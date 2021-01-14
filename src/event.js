@@ -27,10 +27,11 @@ function init (name) {
 function regist (name, listener) {
     // json 格式传入可以注册个事件
     if (isObject(name)) {
+        let result = {};
         for (let key in name) {
-            regist(key, name[key]);
+            result[key] = regist(key, name[key]);
         }
-        return -1;
+        return result;
     }
     if (typeof listener === 'function') {
         return registBase({name, listener});
@@ -38,7 +39,7 @@ function regist (name, listener) {
         return registBase({name, ...listener});
     } else {
         console.warn('错误的listener', name, listener);
-        return -1;
+        return null;
     }
 }
 
@@ -99,6 +100,7 @@ function index (name) {
         return events[name].index;
     } else {
         // console.warn('错误的事件：' + name);
+        return -1;
     }
 }
 
