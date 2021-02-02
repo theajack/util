@@ -160,7 +160,7 @@ class _event {
     name: string;
     id: number;
     index: number;
-    listeners: EventItem[];
+    listeners: Array<EventItem | undefined>;
     hasTrigger: boolean;
     constructor (name: string) {
         // 对于ready之类的事件 增加一个如果已经触发了就马上执行的逻辑
@@ -198,7 +198,7 @@ class _event {
     _findLastIndex () {
         for (let i = this.listeners.length - 1; i >= 0; i--) {
             if (this.listeners[i]) {
-                return this.listeners[i].index;
+                return (this.listeners[i] as EventItem).index;
             }
         }
         return 0;
