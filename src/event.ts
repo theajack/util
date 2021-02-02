@@ -1,12 +1,40 @@
 
+
+type EventName = string | number;
+
 let isUndf = (v: any) => typeof v === 'undefined';
 let isObject = (v: any) => typeof v === 'object';
 
-let events = {}; // 事件回调函数字典
-let EVENT = {}; // 事件名称字典
+let events: {[prop: string]: _event} = {}; // 事件回调函数字典
+let EVENT: {[prop: string]: string} = {}; // 事件名称字典
 
-export function checkEvent (name: string) {
-    if (events[name]) {
+function getEvent (name: EventName){
+    return events[nameToStr(name)];
+}
+function setEvent (eventName: EventName){
+    const name = nameToStr(eventName);
+    events[name] = new _event(name);
+    EVENT[name] = name;
+}
+function delEvent (eventName: EventName){
+    delete events[nameToStr(eventName)];
+    delete EVENT[nameToStr(eventName)];
+}
+
+function getEVENT (name: EventName){
+    return EVENT[nameToStr(name)];
+}
+
+
+function nameToStr (eventName: EventName){
+    if(typeof eventName === 'number'){
+        return eventName.toString();
+    }
+    return eventName;
+}
+
+export function checkEvent (name: EventName) {
+    if (getEvent(name)) {
         return true;
     } else {
         return false;
@@ -15,10 +43,9 @@ export function checkEvent (name: string) {
 
 // 初始化一个事件
 
-function init (name: string) {
-    if (isUndf(EVENT[name])) {
-        events[name] = new _event(name);
-        EVENT[name] = name;
+function init (name: EventName) {
+    if (isUndf(getEVENT(name))) {
+        setEvent(name);
     }
 }
 interface EventListener {
@@ -39,7 +66,7 @@ interface RegistObject {
 // 注册某个事件的一个或多个回调
 
 function regist (
-    name: string | RegistObject,
+    name: EventName | RegistObject,
     listener: EventListener | EventRegistOption
 ) {
     // json 格式传入可以注册个事件
@@ -51,9 +78,9 @@ function regist (
         return result;
     }
     if (typeof listener === 'function') {
-        return registBase({name: name as string, listener});
+        return registBase({name: name as EventName, listener});
     } else if (typeof listener === 'object') {
-        return registBase({name: name as string, ...listener});
+        return registBase({name: name as EventName, ...listener});
     } else {
         console.warn('错误的listener', name, listener);
         return null;
@@ -67,33 +94,32 @@ function registBase ({
     listener,
     index,
     indexBefore,
-}: EventRegistOption & {name: string}) {
+}: EventRegistOption & {name: EventName}) {
     if (!checkEvent(name)) {
         init(name);
     }
-    return events[name].regist({listener, once, all, index, indexBefore});
+    return getEvent(name).regist({listener, once, all, index, indexBefore});
 }
 
 // 移除事件回调
-function remove (name, listener) {
+function remove (name: EventName, cond: number | EventListener) {
     if (!checkEvent(name)) {
         console.warn('removeEvent:未找到事件 ' + name);
         return false;
     }
-    if (isUndf(listener)) {
+    if (isUndf(cond)) {
         console.error('请传入要移除的listener 或 id');
         return false;
     } else {// 移除单个监听
-        return events[name].remove(listener);
+        return getEvent(name).remove(cond);
     }
 }
 // 移除单个事件或是所有
-function clear (name) {
-    if (typeof name === 'string') {
-        if (events[name]) {
-            events[name].clear();
-            delete events[name];
-            delete EVENT[name];
+function clear (name: EventName | EventName[]) {
+    if (typeof name === 'string' || typeof name === 'number') {
+        if (checkEvent(name)) {
+            getEvent(name).clear();
+            delEvent(name);
         }
     } else if (name instanceof Array) {
         name.forEach(n => {
@@ -105,30 +131,30 @@ function clear (name) {
 }
 
 // 触发事件
-function emit (name, data) {
+function emit (name: EventName, data: any) {
     // 此处是为了 all 参数，当没有regist之前emit了，all的listener也能被触发
     if (!checkEvent(name)) {
         init(name);
     }
-    return events[name].emit(data);
+    return getEvent(name).emit(data);
 }
 
-function index (name) {
+function index (name: EventName) {
     if (checkEvent(name)) {
-        return events[name].index;
+        return getEvent(name).index;
     } else {
         // console.warn('错误的事件：' + name);
         return -1;
     }
 }
 
-function findPos (array, index, indexBefore) {
+function findPos (array: any[], index: number, indexBefore: boolean) {
     let n = array.length;
     if (n === 0) {return 0;}
     return bsearch(array, 0, n - 1, index, indexBefore);
 }
 
-function bsearch (array, low, high, index, indexBefore) {
+function bsearch (array: any[], low: number, high: number, index: number, indexBefore: boolean) {
     let mid = Math.floor((low + high) / 2);
     if (low > high) return mid + 1;
     if (array[mid].index > index) {
@@ -157,12 +183,12 @@ interface EventItem {
 // 事件类
 class _event {
     triggerData: any;
-    name: string;
+    name: EventName;
     id: number;
     index: number;
     listeners: Array<EventItem | undefined>;
     hasTrigger: boolean;
-    constructor (name: string) {
+    constructor (name: EventName) {
         // 对于ready之类的事件 增加一个如果已经触发了就马上执行的逻辑
         this.name = name;
         this._init();
@@ -216,7 +242,7 @@ class _event {
         }
         return firstEmit;
     }
-    remove (cond: string | EventListener) {
+    remove (cond: number | EventListener) {
         let attr = '';
         let type = typeof cond;
         if (type === 'number') {
