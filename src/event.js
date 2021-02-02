@@ -45,7 +45,7 @@ function regist (name, listener) {
 
 function registBase ({
     once = false, // 只触发一次
-    all = false, // 始终起作用
+    all = true, // 始终起作用
     name,
     listener,
     index,
@@ -108,7 +108,6 @@ function findPos (array, index, indexBefore) {
     let n = array.length;
     if (n === 0) {return 0;}
     return bsearch(array, 0, n - 1, index, indexBefore);
-    
 }
 
 function bsearch (array, low, high, index, indexBefore) {
@@ -134,12 +133,13 @@ class _event {
     constructor (name) {
         // 对于ready之类的事件 增加一个如果已经触发了就马上执行的逻辑
         this.triggerData = undefined;
+        this.hasTrigger = false;
         this.name = name;
         this.id = 0;
         this.index = 0;
         this.listeners = [];
     }
-    regist ({listener, once = false, all = false, index, indexBefore = false}) {
+    regist ({listener, once = false, all = true, index, indexBefore = false}) {
         if (typeof index !== 'number') {
             index = ++ this.index;
         }
@@ -151,17 +151,18 @@ class _event {
             let pos = findPos(this.listeners, index, indexBefore);
             this.listeners.splice(pos, 0, item);
         }
-        if (all && !isUndf(this.triggerData)) {
+        if (all && this.hasTrigger) {
             if (once) {item.hasTrigger = true;}
-            listener(this.triggerData || undefined);
+            listener(this.triggerData);
         }
         return item;
     }
     emit (data) {
-        this.triggerData = isUndf(data) ? null : data;
+        if (!this.hasTrigger) {this.hasTrigger = true;}
+        this.triggerData = data;
         for (let i = 0; i < this.listeners.length; i++) {
             let item = this.listeners[i];
-            if (!item.once || !item.hasTrigger) {
+            if (item && (!item.once || !item.hasTrigger)) {
                 item.hasTrigger = true;
                 item.listener(data);
             }
@@ -179,14 +180,14 @@ class _event {
             return false;
         }
         let result = this.listeners.find(item => {
-            return item[attr] === cond;
+            return item && item[attr] === cond;
         });
         if (!result) {
             console.warn('removeEvent:未找到监听函数 ' + this.name);
             return false;
         }
         let index = this.listeners.indexOf(result);
-        this.listeners.splice(index, 1);
+        this.listeners[index] = undefined;
         return true;
     }
     clear () {
@@ -203,11 +204,11 @@ const event = {
     checkEvent, // 检查是否存在事件
     remove,
     clear,
-    registBase,
     index,
 };
 
 export default event;
+
 
 // function test () {
 //     event.emit('aa');
