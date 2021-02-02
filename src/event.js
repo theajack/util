@@ -76,6 +76,7 @@ function clear (name) {
         if (events[name]) {
             events[name].clear();
             delete events[name];
+            delete EVENT[name];
         }
     } else if (name instanceof Array) {
         name.forEach(n => {
@@ -92,7 +93,7 @@ function emit (name, data) {
     if (!checkEvent(name)) {
         init(name);
     }
-    events[name].emit(data);
+    return events[name].emit(data);
 }
 
 function index (name) {
@@ -132,11 +133,17 @@ function bsearch (array, low, high, index, indexBefore) {
 class _event {
     constructor (name) {
         // 对于ready之类的事件 增加一个如果已经触发了就马上执行的逻辑
+        this.name = name;
+        this._init();
+    }
+    _init () {
         this.triggerData = undefined;
         this.hasTrigger = false;
-        this.name = name;
         this.id = 0;
         this.index = 0;
+        this.listeners = [];
+    }
+    reset () {
         this.listeners = [];
     }
     regist ({listener, once = false, all = true, index, indexBefore = false}) {
@@ -145,7 +152,7 @@ class _event {
         }
         let n = this.listeners.length;
         let item = {listener, once, all, hasTrigger: false, index, id: ++this.id};
-        if (n === 0 || index > this.listeners[n - 1].index) {
+        if (n === 0 || index > this._findLastIndex()) {
             this.listeners.push(item);
         } else {
             let pos = findPos(this.listeners, index, indexBefore);
@@ -157,16 +164,26 @@ class _event {
         }
         return item;
     }
+    _findLastIndex () {
+        for (let i = this.listeners.length - 1; i >= 0; i--) {
+            if (this.listeners[i]) {
+                return this.listeners[i].index;
+            }
+        }
+        return 0;
+    }
     emit (data) {
+        let firstEmit = this.hasTrigger === false;
         if (!this.hasTrigger) {this.hasTrigger = true;}
         this.triggerData = data;
         for (let i = 0; i < this.listeners.length; i++) {
             let item = this.listeners[i];
             if (item && (!item.once || !item.hasTrigger)) {
                 item.hasTrigger = true;
-                item.listener(data);
+                item.listener(data, firstEmit);
             }
         }
+        return firstEmit;
     }
     remove (cond) {
         let attr = '';
@@ -191,7 +208,7 @@ class _event {
         return true;
     }
     clear () {
-        this.listeners = [];
+        this._init();
         return true;
     }
 }
@@ -208,7 +225,6 @@ const event = {
 };
 
 export default event;
-
 
 // function test () {
 //     event.emit('aa');
