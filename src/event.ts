@@ -1,33 +1,32 @@
 
-
 type EventName = string | number;
 
-let isUndf = (v: any) => typeof v === 'undefined';
-let isObject = (v: any) => typeof v === 'object';
+const isUndf = (v: any) => typeof v === 'undefined';
+const isObject = (v: any) => typeof v === 'object';
 
 let events: {[prop: string]: _event} = {}; // 事件回调函数字典
-let EVENT: {[prop: string]: string} = {}; // 事件名称字典
+const EVENT: {[prop: string]: string} = {}; // 事件名称字典
 
-function getEvent (name: EventName){
+function getEvent (name: EventName) {
     return events[nameToStr(name)];
 }
-function setEvent (eventName: EventName){
+function setEvent (eventName: EventName) {
     const name = nameToStr(eventName);
     events[name] = new _event(name);
     EVENT[name] = name;
 }
-function delEvent (eventName: EventName){
+function delEvent (eventName: EventName) {
     delete events[nameToStr(eventName)];
     delete EVENT[nameToStr(eventName)];
 }
 
-function getEVENT (name: EventName){
+function getEVENT (name: EventName) {
     return EVENT[nameToStr(name)];
 }
 
 
-function nameToStr (eventName: EventName){
-    if(typeof eventName === 'number'){
+function nameToStr (eventName: EventName) {
+    if (typeof eventName === 'number') {
         return eventName.toString();
     }
     return eventName;
@@ -71,8 +70,8 @@ function regist (
 ) {
     // json 格式传入可以注册个事件
     if (isObject(name)) {
-        let result = {};
-        for (let key in name as RegistObject) {
+        const result = {};
+        for (const key in name as RegistObject) {
             result[key] = regist(key, name[key]);
         }
         return result;
@@ -102,7 +101,15 @@ function registBase ({
 }
 
 // 移除事件回调
-function remove (name: EventName, cond: number | EventListener) {
+function remove (name: EventName | EventItem, cond: number | EventListener) {
+    if (!name) {
+        console.error('参数错误', name);
+        return false;
+    }
+    if (typeof name === 'object') {
+        return remove(name.name, name.id);
+    }
+
     if (!checkEvent(name)) {
         console.warn('removeEvent:未找到事件 ' + name);
         return false;
@@ -149,13 +156,13 @@ function index (name: EventName) {
 }
 
 function findPos (array: any[], index: number, indexBefore: boolean) {
-    let n = array.length;
+    const n = array.length;
     if (n === 0) {return 0;}
     return bsearch(array, 0, n - 1, index, indexBefore);
 }
 
 function bsearch (array: any[], low: number, high: number, index: number, indexBefore: boolean) {
-    let mid = Math.floor((low + high) / 2);
+    const mid = Math.floor((low + high) / 2);
     if (low > high) return mid + 1;
     if (array[mid].index > index) {
         return bsearch(array, low, mid - 1, index, indexBefore);
@@ -163,16 +170,17 @@ function bsearch (array: any[], low: number, high: number, index: number, indexB
         return bsearch(array, mid + 1, high, index, indexBefore);
     } else {
         if (indexBefore) {
-            if (mid === 0 || array[mid - 1].index < index) {return mid;};
+            if (mid === 0 || array[mid - 1].index < index) {return mid;}
             return bsearch(array, low, mid - 1, index, indexBefore);
         } else {
-            if (mid === array.length - 1 || array[mid + 1].index > index) {return mid + 1;};
+            if (mid === array.length - 1 || array[mid + 1].index > index) {return mid + 1;}
             return bsearch(array, mid + 1, high, index, indexBefore);
         }
     }
 }
 
-interface EventItem {
+export interface EventItem {
+    name: EventName;
     listener: EventListener;
     all: boolean;
     once: boolean;
@@ -207,12 +215,20 @@ class _event {
         if (typeof index !== 'number') {
             index = ++ this.index;
         }
-        let n = this.listeners.length;
-        let item = {listener, once, all, hasTrigger: false, index, id: ++this.id};
+        const n = this.listeners.length;
+        const item = {
+            name: this.name,
+            listener,
+            once,
+            all,
+            hasTrigger: false,
+            index,
+            id: ++this.id
+        };
         if (n === 0 || index > this._findLastIndex()) {
             this.listeners.push(item);
         } else {
-            let pos = findPos(this.listeners, index, indexBefore);
+            const pos = findPos(this.listeners, index, indexBefore);
             this.listeners.splice(pos, 0, item);
         }
         if (all && this.hasTrigger) {
@@ -230,11 +246,11 @@ class _event {
         return 0;
     }
     emit (data: any) {
-        let firstEmit = this.hasTrigger === false;
+        const firstEmit = this.hasTrigger === false;
         if (!this.hasTrigger) {this.hasTrigger = true;}
         this.triggerData = data;
         for (let i = 0; i < this.listeners.length; i++) {
-            let item = this.listeners[i];
+            const item = this.listeners[i];
             if (item && (!item.once || !item.hasTrigger)) {
                 item.hasTrigger = true;
                 item.listener(data, firstEmit);
@@ -244,7 +260,7 @@ class _event {
     }
     remove (cond: number | EventListener) {
         let attr = '';
-        let type = typeof cond;
+        const type = typeof cond;
         if (type === 'number') {
             attr = 'id';
         } else if (type === 'function') {
@@ -253,14 +269,15 @@ class _event {
             console.warn('removeEvent 传入的参数有误');
             return false;
         }
-        let result = this.listeners.find(item => {
+        const result = this.listeners.find(item => {
             return item && item[attr] === cond;
         });
         if (!result) {
             console.warn('removeEvent:未找到监听函数 ' + this.name);
             return false;
         }
-        let index = this.listeners.indexOf(result);
+        const index = this.listeners.indexOf(result);
+        // 不能直接删除 如果再触发过程中调用了删除 就会引起索引混乱
         this.listeners[index] = undefined;
         return true;
     }
