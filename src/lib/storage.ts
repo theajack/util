@@ -1,13 +1,13 @@
-let storage = window.localStorage;
-const ADDON = '_jsbox';
+const storage = window.localStorage;
+const ADDON = '_tc_u';
 
-function read (key) {
+export function read (key: string) {
     key += ADDON;
     let value = storage.getItem(key);
     if (value === null) {
         return null;
     }
-    let type = value.substr(0, value.indexOf(':'));
+    const type = value.substr(0, value.indexOf(':'));
     value = value.substr(value.indexOf(':') + 1);
     if (type === 'number') {
         return parseFloat(value);
@@ -18,9 +18,9 @@ function read (key) {
     }
     return value;
 }
-function write (key, value) {
+export function write (key: string, value: any) {
     key += ADDON;
-    let type = typeof value;
+    const type = typeof value;
     if (type === 'object') {
         value = JSON.stringify(value);
     } else if (type !== 'string') {
@@ -30,13 +30,7 @@ function write (key, value) {
     storage.setItem(key, value);
 }
 
-function remove (key) {
+export function remove (key: string) {
     key += ADDON;
     storage.removeItem(key);
 }
-
-export default {
-    read,
-    write,
-    remove
-};

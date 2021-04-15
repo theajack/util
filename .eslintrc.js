@@ -1,29 +1,28 @@
 module.exports = {
-  "env": {
+  parser: '@typescript-eslint/parser',
+  plugins: [
+    '@typescript-eslint',
+    'jest'
+  ],
+  env: {
     "browser": true,
     "es6": true,
     "node": true,
-    "commonjs": true
+    "commonjs": true,
+    "jest/globals": true
   },
   "parserOptions": {
-    "parser": "babel-eslint",
-    "ecmaVersion": 2018,
-    "ecmaFeatures": {
-      "arrowFunctions": true,
-      "classes": true,
-      "modules": true,
-      "defaultParams": true,
-      "experimentalObjectRestSpread": true
-    },
-    "sourceType": "module",
-    "parserOptions": {
-      "allowImportExportEverywhere": true
-    }
-  },
-  "globals": {
-    "window": true,
+    "sourceType": "module" // ts 中使用 es 模块
   },
   "rules": {
+    'prefer-const': 'error',
+    'no-var': "error",
+    // 优先使用 interface 而不是 type
+    '@typescript-eslint/consistent-type-definitions': [
+        "error",
+        "interface"
+    ],
+    "@typescript-eslint/no-unused-vars": "error", // 使用 ts 未使用变量的规则 比如枚举类型在es中会报错
     "no-extend-native": 0,
     "no-new": 0,
     "no-useless-escape": 0,
@@ -47,7 +46,6 @@ module.exports = {
     "object-curly-spacing": ["error", "never"],
     "arrow-spacing": "error",
     "no-multiple-empty-lines": "error",
-    "no-unused-vars": "error",
     "spaced-comment": "error",
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "no-unreachable": "error",
@@ -56,6 +54,10 @@ module.exports = {
     "semi-spacing": "error",
     "comma-spacing": "error",
     "key-spacing": "error",
-    "no-undef": "error"
+    "no-undef": "error",
+    "prefer-const": ["error", {
+      "destructuring": "any",
+      "ignoreReadBeforeAssign": false
+    }]
   }
 }

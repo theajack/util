@@ -1,16 +1,16 @@
 // let version = require('../helper/version.json').version;
 
 const path = require('path');
-let pkg = require('../package.json');
-let config = require('../ebuild.config');
+const pkg = require('../package.json');
+const config = require('../ebuild.config');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // 分离css
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 // if config.name not exist, use package name
-let name = ((name) => {
+const name = ((name) => {
     let res = '';
-    for (var i = 0; i < name.length; i++) {
+    for (let i = 0; i < name.length; i++) {
         if (name[i] === '-') {
             if (i < name.length - 1) {
                 i++;
@@ -22,16 +22,16 @@ let name = ((name) => {
     }
     return res;
 })(pkg.name);
+ 
+const libraryName = config.libraryName || name;
+const cdnFileName = config.cdnFileName || name;
 
-let libraryName = config.libraryName || name;
-let cdnFileName = config.cdnFileName || name;
+const version = config.version;
 
-let version = config.version;
-
-let index = 'src/index.js';
+const index = 'src/index.ts';
 
 module.exports = (env) => {
-    let npm = env.mode === 'npm';
+    const npm = env.mode === 'npm';
     return {
         mode: 'production',
         entry: path.resolve('./', index),
@@ -43,9 +43,17 @@ module.exports = (env) => {
             libraryExport: 'default',
         },
         externals: npm ? config.npmExternals : {},
+        resolve: {
+            extensions: [ '.tsx', '.ts', '.d.ts', '.js' ]
+        },
         module: {
             rules: [
                 {
+                    test: /(.ts)$/,
+                    use: {
+                        loader: 'ts-loader'
+                    }
+                }, {
                     test: /(.js)$/,
                     use: [{
                         loader: 'babel-loader',

@@ -1,3 +1,6 @@
+import {IJson} from '../type/type';
+import {mapArray, mapJson} from './util';
+
 /* 创建一个简单的事件队列
 let e = creatEventReady();
 e.onEventReady((...args)=>{
@@ -5,12 +8,21 @@ e.onEventReady((...args)=>{
 });
 e.eventReady(1,2,3)
 */
-export function creatEventReady () {
 
-    let queue = [];
-    let lastArgs = null;
+interface IEventReady {
+    onEventReady(fn: Function, ...args: any[]): void;
+    eventReady(...args: any[]): void;
+}
 
-    function onEventReady (fn, ...args) {
+export function creatEventReady (): IEventReady {
+
+    const queue: {
+        fn: Function;
+        args: any;
+    }[] = [];
+    let lastArgs: any = null;
+
+    function onEventReady (fn: Function, ...args: any[]) {
         if (!queue.find(item => item.fn === fn)) {
             queue.push({fn, args});
         }
@@ -21,8 +33,8 @@ export function creatEventReady () {
             fn(...args);
         }
     }
-    
-    function eventReady (...args) {
+     
+    function eventReady (...args: any[]) {
         lastArgs = args;
         queue.forEach(item => {
             item.fn(...((args.length === 0) ? item.args : args));
@@ -42,23 +54,20 @@ dot.start();
 dot.stop();
 dot.hide();
 
-$ 要传入 tacl-ui
+$ 要传入 easy-dom
 */
 export function createDotAnimation ({
     time = 400,
     length = 3,
     sign = '.',
     autoStart = false,
-    $
 } = {}) {
-    if (!$) {
-        throw new Error('请传入 $');
-    }
     let dots = '';
-    let interval = null;
-    let el = $.create('span').addClass('dot-ani', false).style('position', 'absolute').created(() => {
-        if (autoStart) {start();}
-    });
+    let interval: any = null;
+    const el = document.createElement('span');
+    el.className = 'dot-ani';
+    el.style.position = 'absolute';
+
     function stop () {
         clearInterval(interval);
         interval = null;
@@ -66,7 +75,7 @@ export function createDotAnimation ({
 
     function hide () {
         stop();
-        el.hide();
+        el.style.display = 'none';
     }
 
     function start () {
@@ -77,9 +86,10 @@ export function createDotAnimation ({
             } else {
                 dots = '';
             }
-            el.text(dots);
+            el.innerText = dots;
         }, time);
     }
+    if (autoStart) {start();}
     return {el, stop, hide, start};
 }
 
@@ -97,61 +107,42 @@ state.get('a');
 state.set('a', 2);
 state.trigger('a'); // 主动触发一次 属性 change
 */
-export function createState (state) {
+export function createState (state: IJson) {
     if (typeof state !== 'object') return;
-    let calls = {};
-    for (let k in state) {
+    const calls: IJson<IEventReady> = {};
+    for (const k in state) {
         calls[k] = creatEventReady();
     }
-    function checkNecessary (name) {
+    function checkNecessary (name: string) {
         if (typeof state[name] === 'undefined') {
             console.warn(`不存在的属性:${name}`);
             return false;
         };
         return true;
     }
-    function get (name) {
+    function get (name: string) {
         return state[name];
     }
-    function set (name, value) {
-        mapJson(name, value, (name, value) => {
+    function set (name: string | object, value?: any) {
+        mapJson(name, value, (name: string, value: any) => {
             if (!checkNecessary(name) || value === state[name]) {return;}
             calls[name].eventReady(value, state[name]);
             state[name] = value;
         });
     }
-    function onChange (name, fn) {
-        mapJson(name, fn, (name, fn) => {
+    function onChange (name: string | object, fn: Function) {
+        mapJson(name, fn, (name: string, fn: Function) => {
             if (!checkNecessary(name)) {return;}
             calls[name].onEventReady(fn);
         });
     }
 
-    function trigger (...name) {
-        mapArray(name, (name) => {
+    function trigger (...name: string[]) {
+        mapArray(name, (name: string) => {
             if (!checkNecessary(name)) {return;}
             calls[name].eventReady(state[name], state[name]);
         });
     }
 
     return {get, set, onChange, trigger};
-}
-
-export function mapArray (value, fn) {
-    if (value instanceof Array) {
-        value.forEach(v => {
-            fn(v);
-        });
-    } else {
-        fn(value);
-    }
-}
-export function mapJson (key, value, fn) {
-    if (typeof key === 'object') {
-        for (let k in key) {
-            fn(k, key[k]);
-        }
-    } else {
-        fn(key, value);
-    }
 }
