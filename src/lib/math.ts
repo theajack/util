@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 11:19:36
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 11:57:52
+ * @LastEditTime: 2021-04-16 18:05:52
  * @FilePath: \util\src\lib\math.ts
  * @Description: Coding something
  */
@@ -19,10 +19,14 @@ export function countDistance (point1: IPoint, point2: IPoint) {
 export function countDistanceByDiff (diff: IPoint) {
     return Math.round(
         Math.pow(
-            Math.pow(diff.x, 2) + Math.pow(diff.y, 2),
+            countSumOfSquare(diff.x, diff.y),
             0.5
         )
     );
+}
+
+export function countSumOfSquare (x: number, y: number) {
+    return Math.pow(x, 2) + Math.pow(y, 2);
 }
 
 export function countValueByRateAndRange (
@@ -42,14 +46,45 @@ export function circleToRect (circle: ICircle) {
     };
 }
 
-export function isPointInRect (point: IPoint, rect: IRect) {
-    // 为提高性能 仅作方形计算 （运行需要平方和开方操作）
+export function isPointInRect ({
+    point,
+    rect,
+    border = false,
+}: {
+    point: IPoint;
+    rect: IRect;
+    border?: boolean;
+}) {
+    if (border) {
+        return (
+            point.x >= rect.x1 &&
+            point.x <= rect.x2 &&
+            point.y >= rect.y1 &&
+            point.y <= rect.y2
+        );
+    }
     return (
         point.x > rect.x1 &&
         point.x < rect.x2 &&
         point.y > rect.y1 &&
         point.y < rect.y2
     );
+}
+
+export function isPointInCircle ({
+    point,
+    circle,
+    border = false,
+}: {
+    point: IPoint;
+    circle: ICircle;
+    border?: boolean;
+}) {
+    const distance = countSumOfSquare(
+        point.x - circle.x, point.y - circle.y
+    );
+    const base = Math.pow(circle.r, 2);
+    return border ? (distance < base) : (distance <= base);
 }
 
 /**

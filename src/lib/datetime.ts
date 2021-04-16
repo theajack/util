@@ -2,10 +2,14 @@
  * @Author: tackchen
  * @Date: 2021-04-15 10:31:46
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 16:13:50
+ * @LastEditTime: 2021-04-16 17:55:07
  * @FilePath: \util\src\lib\datetime.ts
  * @Description: 日期相关api
  */
+
+import {isString} from './is';
+import {assign} from './polyfill';
+import {TDateTime} from '../type/type';
 
 // 获取某年某月一共有多少天
 export function getDaysInMonth (year: number, month: number) {
@@ -18,26 +22,121 @@ export function getFirstDayWeekInMonth (year: number, month: number) {
 }
 
 // 传入毫秒数 返回 时分秒
-export function formatTime (
-    time: number,
-    type: 'number' | 'json' | 'text' = 'number'
-) {
-    let sec: number, hour: number, min: number;
-    if (time <= 0) {
-        sec = hour = min = 0;
-    } else {
-        sec = Math.floor(time / 1000);
-        hour = Math.floor(sec / 3600);
-        sec -= hour * 3600;
-        min = Math.floor(sec / 60);
-        sec -= min * 60;
-    }
-    if (type === 'json') {
-        return {hour, min, sec};
+export function formatTime ({
+    time,
+    type,
+}:{
+    time: number;
+    type?: 'number' | 'json' | 'text' | 'number-no-hour';
+}): string;
+export function formatTime ({
+    time,
+    template,
+    customReplacers,
+}:{
+    time: number;
+    template: string;
+    customReplacers?: {[prop in TDateTime]?: string | RegExp};
+}): string;
+export function formatTime ({
+    time,
+    type,
+    template,
+    customReplacers,
+}: {
+    time: number;
+    type?: 'number' | 'json' | 'text' | 'number-no-hour';
+    template?: string;
+    customReplacers?: {[prop in TDateTime]?: string | RegExp};
+}) {
+    const json = timeToJson(time);
+    if (template) {
+        return formatDate({template, date: json, customReplacers});
+    } else if (type === 'json') {
+        return json;
     } else if (type === 'text') {
-        return `${fnText(hour, '小时')}${fnText(min, '分钟')}${fnText(sec, '秒')}` || '0秒';
+        return `${fnText(json.hour, '小时')}${fnText(json.minute, '分钟')}${fnText(json.second, '秒')}` || '0秒';
+    } else if (type === 'number-no-hour') {
+        return `${fn(json.minute)}:${fn(json.second)}`;
     }
-    return `${fn(hour)}:${fn(min)}:${fn(sec)}`;
+    return `${fn(json.hour)}:${fn(json.minute)}:${fn(json.second)}`;
+}
+
+export function formatDate ({
+    template = 'YYYY-MM-DD hh:mm:ss',
+    date = new Date(),
+    customReplacers,
+}: {
+    template: string,
+    date: {[prop in TDateTime]?: number} | Date | number,
+    customReplacers?: {[prop in TDateTime]?: string | RegExp}
+}) {
+    if (typeof date === 'number') {
+        date = new Date(date);
+    }
+    if (date instanceof Date) {
+        date = dateToJson();
+    }
+    const replacers: {
+        [prop in TDateTime]: string | RegExp
+    } = {
+        year: 'YYYY',
+        month: 'MM',
+        day: 'DD',
+        hour: 'hh',
+        minute: 'mm',
+        second: 'ss',
+        microsecond: 'ms',
+    };
+    if (customReplacers) {
+        assign(replacers, customReplacers);
+    }
+    for (const key in date) {
+        const item = date[key as TDateTime];
+        if (typeof item === 'number') {
+            const str = fn(item);
+            const replacer = replacers[key as TDateTime];
+            let reg: RegExp;
+            if (replacer instanceof RegExp) {
+                reg = replacer as RegExp;
+            } else if (isString(replacer)) {
+                reg = new RegExp(replacer, 'g');
+            } else {
+                continue;
+            }
+            template = template.replace(reg, str);
+            if (key === 'year') {
+                template = template.replace(/YY/g, str.substr(str.length - 2));
+            }
+        }
+    }
+    return template;
+}
+
+export function timeToJson (time: number) {
+    let second: number, hour: number, minute: number;
+    if (time <= 0) {
+        second = hour = minute = 0;
+    } else {
+        second = Math.floor(time / 1000);
+        hour = Math.floor(second / 3600);
+        second -= hour * 3600;
+        minute = Math.floor(second / 60);
+        second -= minute * 60;
+    }
+    return {hour, minute, second};
+}
+
+export function dateToJson (date = nowDate()) {
+    return {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+        hour: date.getHours(),
+        minute: date.getMinutes(),
+        second: date.getSeconds(),
+        microsecond: date.getMilliseconds()
+    };
 }
 
 export function timeToDate (time: number | Date) {
@@ -48,31 +147,31 @@ export function dateToTime (date: number | Date) {
     return (typeof date === 'number') ? date : date.getTime();
 }
 
-export function formatDate () {
-    
-}
-
-export function timeToString (time: number) {
-    const date = new Date(time);
-    return `${date.getFullYear()}-${fn(date.getMonth() + 1)}-${fn(date.getDate())} ${fn(date.getHours())}:${fn(date.getMinutes())}`;
-}
-
 export function nowTime () {
-    return new Date().getTime();
+    return nowDate().getTime();
 }
 
-export function nowTimeString () {
-    return timeToString(nowTime());
-}
-
-export function min2ms (min: number) {
-    return min * 60 * 1000;
+export function nowDate () {
+    return new Date();
 }
 
 function fn (num: number) {
-    return num < 10 ? ('0' + num) : num;
+    return num < 10 ? ('0' + num) : num.toString();
 }
 
 function fnText (num: number, tail: string) {
     return num > 0 ? (num + tail) : '';
+}
+
+export function msToSecond (value: number) {
+    return Math.round(value / 1000);
+}
+export function secondToMs (value: number) {
+    return value * 1000;
+}
+export function minuteToMs (value: number) {
+    return secondToMs(value * 60);
+}
+export function hourToMs (value: number) {
+    return minuteToMs(value * 60);
 }

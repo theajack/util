@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 11:05:16
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 13:29:06
+ * @LastEditTime: 2021-04-16 16:02:43
  * @FilePath: \util\src\type\type.d.ts
  * @Description: Coding something
  */
@@ -44,3 +44,5 @@ export interface ISize {
     width: number;
     height: number;
 }
+
+export type TDateTime = 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'microsecond';
