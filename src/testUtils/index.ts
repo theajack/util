@@ -12,9 +12,9 @@ export function batchTestCases ({
     testCases.forEach((testCase, index) => {
         const testCaseName = testCase.name || `${name}-${index}`;
         test(testCaseName, () => {
-            const results = testCase.test();
+            const result = typeof testCase.test === 'function' ? testCase.test() : testCase.test;
             // const method = testCase.method || 'toStrictEqual';
-            expect(results).toStrictEqual(testCase.expect);
+            expect(result).toStrictEqual(testCase.expect);
         });
     });
 }

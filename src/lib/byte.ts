@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 11:06:31
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 11:29:53
+ * @LastEditTime: 2021-04-15 15:45:44
  * @FilePath: \util\src\lib\byte.ts
  * @Description: Coding something
  */
@@ -10,7 +10,7 @@ import {UINT_TYPE} from './constant';
 import {isNumber} from './is';
 import GBK from './gbk';
 
-export function stringToByteArray (
+export function stringToBytes (
     str: string,
     gbk: boolean = false
 ) {

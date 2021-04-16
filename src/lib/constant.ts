@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 10:25:50
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 11:43:24
+ * @LastEditTime: 2021-04-15 15:50:57
  * @FilePath: \util\src\lib\constant.ts
  * @Description: Coding something
  */

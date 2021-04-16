@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 10:25:07
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 12:20:14
+ * @LastEditTime: 2021-04-15 15:53:07
  * @FilePath: \util\src\lib\is.ts
  * @Description: Coding something
  */
@@ -19,7 +19,8 @@ export function isObject (v: any) {
     return isType(v, TYPE.OBJECT);
 }
 export function isJson (v: any) {
-    if (isObject(v) && !isNull(v) && isFunc(v.constructor)) {
+    if (isNull(v)) {return false;}
+    if (isObject(v) && isFunc(v.constructor)) {
         const name = v.constructor.name;
         if (isString(name) && name !== '') {
             return (name === 'Object');
@@ -67,8 +68,6 @@ export function isMobile () {
 export function isIOS () {
     return /(iphone|ipad|ipod|ios)/.test(_ua());
 }
-
-export const _isIOS = isIOS();
 
 export function isAndroid () {
     return /android/i.test(_ua());

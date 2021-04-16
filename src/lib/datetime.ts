@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 10:31:46
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 11:38:07
+ * @LastEditTime: 2021-04-15 16:13:50
  * @FilePath: \util\src\lib\datetime.ts
  * @Description: 日期相关api
  */
@@ -17,7 +17,7 @@ export function getFirstDayWeekInMonth (year: number, month: number) {
     return new Date(year, month - 1, 1).getDay();
 }
 
-
+// 传入毫秒数 返回 时分秒
 export function formatTime (
     time: number,
     type: 'number' | 'json' | 'text' = 'number'
@@ -40,17 +40,29 @@ export function formatTime (
     return `${fn(hour)}:${fn(min)}:${fn(sec)}`;
 }
 
-export function timestampToStr (time: number) {
+export function timeToDate (time: number | Date) {
+    return (typeof time === 'number') ? new Date(time) : time;
+}
+
+export function dateToTime (date: number | Date) {
+    return (typeof date === 'number') ? date : date.getTime();
+}
+
+export function formatDate () {
+    
+}
+
+export function timeToString (time: number) {
     const date = new Date(time);
     return `${date.getFullYear()}-${fn(date.getMonth() + 1)}-${fn(date.getDate())} ${fn(date.getHours())}:${fn(date.getMinutes())}`;
 }
 
-export function nowDateTime (time = false) {
-    const date = new Date();
-    if (time) {
-        return date.getTime();
-    }
-    return `${date.getFullYear()}-${fn(date.getMonth() + 1)}-${fn(date.getDate())} ${fn(date.getHours())}:${fn(date.getMinutes())}:${fn(date.getSeconds())}`;
+export function nowTime () {
+    return new Date().getTime();
+}
+
+export function nowTimeString () {
+    return timeToString(nowTime());
 }
 
 export function min2ms (min: number) {
