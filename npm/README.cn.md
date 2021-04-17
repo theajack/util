@@ -1,6 +1,41 @@
-## [tc-util](https://github.com/theajack/util) 
+# [tc-util](https://www.github.com/theajack/util)
 
-造一个轮子(常用工具方法)
+
+<p>
+    <a href="https://www.github.com/theajack/util/stargazers" target="_black">
+        <img src="https://img.shields.io/github/stars/theajack/util?logo=github" alt="stars" />
+    </a>
+    <a href="https://www.github.com/theajack/util/network/members" target="_black">
+        <img src="https://img.shields.io/github/forks/theajack/util?logo=github" alt="forks" />
+    </a>
+    <a href="https://www.npmjs.com/package/tc-util" target="_black">
+        <img src="https://img.shields.io/npm/v/tc-util?logo=npm" alt="version" />
+    </a>
+    <a href="https://www.npmjs.com/package/tc-util" target="_black">
+        <img src="https://img.shields.io/npm/dm/tc-util?color=%23ffca28&logo=npm" alt="downloads" />
+    </a>
+    <a href="https://www.jsdelivr.com/package/npm/tc-util" target="_black">
+        <img src="https://data.jsdelivr.com/v1/package/npm/tc-util/badge" alt="jsdelivr" />
+    </a>
+</p>
+<p>
+    <a href="https://github.com/theajack" target="_black">
+        <img src="https://img.shields.io/badge/Author-%20theajack%20-7289da.svg?&logo=github" alt="author" />
+    </a>
+    <a href="https://www.github.com/theajack/util/blob/master/LICENSE" target="_black">
+        <img src="https://img.shields.io/github/license/theajack/util?color=%232DCE89&logo=github" alt="license" />
+    </a>
+    <a href="https://cdn.jsdelivr.net/gh/theajack/util/dist/tc-util.latest.min.js"><img src="https://img.shields.io/bundlephobia/minzip/tc-util.svg" alt="Size"></a>
+    <a href="https://github.com/theajack/util/search?l=javascript"><img src="https://img.shields.io/github/languages/top/theajack/util.svg" alt="TopLang"></a>
+    <a href="https://github.com/theajack/util/issues"><img src="https://img.shields.io/github/issues-closed/theajack/util.svg" alt="issue"></a>
+    <a href="https://www.github.com/theajack/util"><img src="https://img.shields.io/librariesio/dependent-repos/npm/tc-util.svg" alt="Dependent"></a>
+</p>
+
+<h3>一些常用的工具方法</h3>
+
+**[English](https://github.com/theajack/util/blob/master/README.md) | [Update Log](https://github.com/theajack/util/blob/master/helper/version.md) | [Feedback bug](https://github.com/theajack/util/issues/new) | [Gitee](https://gitee.com/theajack/util)**
+
+---
 
 ### 0. 模块
 
@@ -204,4 +239,4 @@ import {formatDate} from 'tc-util/datetime';
 
 #### 2.14. event
 
-请参考 [tc-event](https://github.com/theajack/tc-event)
+请参考 [tc-util](https://github.com/theajack/util)

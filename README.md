@@ -1,6 +1,24 @@
-## [tc-util](https://github.com/theajack/util) 
+# [tc-util](https://www.github.com/theajack/util)
 
-Building a wheel, common tools and methods
+<p>
+    <a href="https://www.github.com/theajack/util"><img src="https://img.shields.io/github/stars/theajack/util.svg?style=social" alt="star"></a>
+    <a href="https://theajack.gitee.io"><img src="https://img.shields.io/badge/author-theajack-blue.svg?style=social" alt="Author"></a>
+</p> 
+
+<p>
+    <a href="https://www.npmjs.com/package/tc-util"><img src="https://img.shields.io/npm/v/tc-util.svg" alt="Version"></a>
+    <a href="https://npmcharts.com/compare/tc-util?minimal=true"><img src="https://img.shields.io/npm/dm/tc-util.svg" alt="Downloads"></a>
+    <a href="https://cdn.jsdelivr.net/npm/tc-util/tc-util.min.js"><img src="https://img.shields.io/bundlephobia/minzip/tc-util.svg" alt="Size"></a>
+    <a href="https://github.com/theajack/util/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/tc-util.svg" alt="License"></a>
+    <a href="https://github.com/theajack/util/search?l=typescript"><img src="https://img.shields.io/github/languages/top/theajack/util.svg" alt="TopLang"></a>
+    <a href="https://github.com/theajack/util/issues"><img src="https://img.shields.io/github/issues-closed/theajack/util.svg" alt="issue"></a>
+</p>
+
+<h3>Some commonly used tools and methods</h3>
+
+**[中文](https://github.com/theajack/util/blob/master/README.cn.md) | [Update Log](https://github.com/theajack/util/blob/master/helper/version.md) | [Feedback bug](https://github.com/theajack/util/issues/new) | [Gitee](https://gitee.com/theajack/util)**
+
+---
 
 ### 0. Module
 
@@ -30,13 +48,13 @@ npm i tc-util
 Full reference
 
 ```js
-import tcUtil from'tc-util';
+import tcUtil from 'tc-util';
 ```
 
 On-demand introduction
 
 ```js
-import tcMath from'tc-util/math';
+import tcMath from 'tc-util/math';
 import {formatDate} from'tc-util/datetime';
 ```
 

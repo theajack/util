@@ -85,11 +85,10 @@ export function random (a: number, b: number) {
 };
 
 export const download = (() => {
-    let isInit = false;
-    const downloadLink: HTMLElement = document.createElement('a');
+    let downloadLink: HTMLElement | null = null;
     return (str: string, filename = 'tc-util-file', type = 'text/plain') => {
-        if (!isInit) {
-            isInit = true;
+        if (!downloadLink) {
+            downloadLink = document.createElement('a') as HTMLElement;
             downloadLink.setAttribute('style', 'position: fixed;top: -100px');
             document.body.appendChild(downloadLink);
         }

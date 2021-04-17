@@ -1,9 +1,9 @@
-const storage = window.localStorage;
+
 const ADDON = '_tc_u';
 
 export function getStorage (key: string) {
     key += ADDON;
-    let value = storage.getItem(key);
+    let value = window.localStorage.getItem(key);
     if (value === null) {
         return null;
     }
@@ -27,10 +27,10 @@ export function setStorage (key: string, value: any) {
         value = value.toString();
     }
     value = `${type}:${value}`;
-    storage.setItem(key, value);
+    window.localStorage.setItem(key, value);
 }
 
 export function removeStorage (key: string) {
     key += ADDON;
-    storage.removeItem(key);
+    window.localStorage.removeItem(key);
 }
