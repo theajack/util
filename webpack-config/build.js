@@ -1,98 +1,97 @@
-// let version = require('../helper/version.json').version;
-
 const path = require('path');
-const pkg = require('../package.json');
-const config = require('../ebuild.config');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // 分离css
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+require('../helper/generate-export');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const RunNodeWebpackPlugin = require('run-node-webpack-plugin');
+const fileConfig = require('./_build_config.json');
 
-// if config.name not exist, use package name
-const name = ((name) => {
-    let res = '';
-    for (let i = 0; i < name.length; i++) {
-        if (name[i] === '-') {
-            if (i < name.length - 1) {
-                i++;
-                res += name[i].toUpperCase();
-            }
-        } else {
-            res += name[i];
-        }
+const fs = require('fs');
+const version = require('../package.json').version;
+
+fs.writeFileSync(path.resolve('./', 'src/version.ts'), `export default '${version}';`, 'utf8');
+
+function generateEntrys (fileConfig) {
+    const entrys = {};
+    for (const k in fileConfig) {
+        entrys[k] = path.resolve('./', fileConfig[k].path);
     }
-    return res;
-})(pkg.name);
- 
-const libraryName = config.libraryName || name;
-const cdnFileName = config.cdnFileName || name;
+    return entrys;
+}
 
-const version = config.version;
+function clearDir (name, root = true) {
+    let files = [];
+    if (fs.existsSync(name)) {
+        files = fs.readdirSync(name);
+        files.forEach((file) => {
+            const curPath = name + '/' + file;
+            if (fs.statSync(curPath).isDirectory()) {
+                clearDir(curPath, false); // 递归删除文件夹
+            } else {
+                fs.unlinkSync(curPath); // 删除文件
+            }
+        });
+        if (!root)
+            fs.rmdirSync(name);
+    }
+}
 
-const index = 'src/index.ts';
+clearDir(path.resolve('./', 'npm'));
 
-module.exports = (env) => {
-    const npm = env.mode === 'npm';
+module.exports = () => {
     return {
         mode: 'production',
-        entry: path.resolve('./', index),
+        entry: generateEntrys(fileConfig),
         output: {
-            path: path.resolve('./', npm ? 'npm' : 'cdn'),
-            filename: npm ? 'index.js' : (cdnFileName + '.' + version + '.min.js'),
-            library: libraryName,
+            path: path.resolve('./', 'npm'),
+            filename: (chunkData) => {
+                const name = chunkData.chunk.name;
+                return `${fileConfig[name].file}.js`;
+            },
+            library: '[name]',
             libraryTarget: 'umd',
             libraryExport: 'default',
+            globalObject: 'this',
         },
-        externals: npm ? config.npmExternals : {},
+        externals: {
+            'tc-event': 'tc-event',
+            'easy-dom-util': 'easy-dom-util',
+        },
         resolve: {
-            extensions: [ '.tsx', '.ts', '.d.ts', '.js' ]
+            extensions: [ '.tsx', '.ts', '.js' ]
         },
+        externals: {},
         module: {
-            rules: [
-                {
-                    test: /(.ts)$/,
-                    use: {
-                        loader: 'ts-loader'
-                    }
-                }, {
-                    test: /(.js)$/,
-                    use: [{
-                        loader: 'babel-loader',
-                    }]
-                }, {
-                    enforce: 'pre',
-                    test: /\.js$/,
-                    loader: 'eslint-loader',
-                    exclude: /node_modules/,
-                    options: {
-                        configFile: './.eslintrc.js'
-                    }
-                }, {
-                    test: /\.css$/,
-                    use: [MiniCssExtractPlugin.loader, 'css-loader'],
-                }, {
-                    test: /\.less$/,
-                    use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
-                }, {
-                    test: /\.(png|jpg|gif|svg|woff2?|eot|ttf)(\?.*)?$/,
-                    loader: 'url-loader',
-                    options: {
-                        limit: 50000,
-                    },
-                }, {
-                    test: /\.html$/,
-                    loader: 'html-loader',
+            rules: [{
+                test: /(.ts)$/,
+                use: {
+                    loader: 'ts-loader'
                 }
-            ]
+            }, {
+                test: /(.js)$/,
+                use: [{
+                    loader: 'babel-loader',
+                }]
+            }, {
+                test: /(.js)$/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                exclude: /node_modules/,
+                options: {
+                    configFile: './.eslintrc.js'
+                }
+            }]
         },
         plugins: [
-            new MiniCssExtractPlugin({
-                filename: 'assets/css/[name].min.css',
+            new CopyWebpackPlugin({
+                patterns: [
+                    {from: 'src/type/main.d.ts', to: 'tc-util.min.d.ts'},
+                    {from: 'src/type/*.d.ts', flatten: true},
+                    {from: 'README.cn.md'},
+                    {from: 'README.md'},
+                    {from: 'src/LICENSE'},
+                    {from: 'src/package.json'}
+                ]
             }),
-            new HtmlWebpackPlugin({
-                template: './helper/index.tpl.html',
-                filename: 'index.html',
-            }),
-            new OptimizeCssAssetsPlugin()
+            new RunNodeWebpackPlugin({scriptToRun: './helper/sync-npm-version.js'})
         ]
     };
 };

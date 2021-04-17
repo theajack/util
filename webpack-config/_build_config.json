@@ -1,0 +1,58 @@
+{
+    "tcUtil": {
+        "file": "tc-util.min",
+        "path": "src/index.ts"
+    },
+    "tcByte": {
+        "file": "byte",
+        "path": "src/lib/__export__/__byte__.ts"
+    },
+    "tcConstant": {
+        "file": "constant",
+        "path": "src/lib/__export__/__constant__.ts"
+    },
+    "tcCookie": {
+        "file": "cookie",
+        "path": "src/lib/__export__/__cookie__.ts"
+    },
+    "tcDatetime": {
+        "file": "datetime",
+        "path": "src/lib/__export__/__datetime__.ts"
+    },
+    "tcDom": {
+        "file": "dom",
+        "path": "src/lib/__export__/__dom__.ts"
+    },
+    "tcExtend": {
+        "file": "extend",
+        "path": "src/lib/__export__/__extend__.ts"
+    },
+    "tcGbk": {
+        "file": "gbk",
+        "path": "src/lib/__export__/__gbk__.ts"
+    },
+    "tcIs": {
+        "file": "is",
+        "path": "src/lib/__export__/__is__.ts"
+    },
+    "tcLib": {
+        "file": "lib",
+        "path": "src/lib/__export__/__lib__.ts"
+    },
+    "tcMath": {
+        "file": "math",
+        "path": "src/lib/__export__/__math__.ts"
+    },
+    "tcPolyfill": {
+        "file": "polyfill",
+        "path": "src/lib/__export__/__polyfill__.ts"
+    },
+    "tcStorage": {
+        "file": "storage",
+        "path": "src/lib/__export__/__storage__.ts"
+    },
+    "tcTool": {
+        "file": "tool",
+        "path": "src/lib/__export__/__tool__.ts"
+    }
+}

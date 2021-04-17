@@ -1,12 +1,14 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 11:20:11
- * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 11:46:07
+ * @LastEditors: theajack
+ * @LastEditTime: 2021-04-17 12:05:49
  * @FilePath: \util\src\lib\dom.ts
  * @Description: Coding something
  */
-import '../type/extends';
+import _ from 'easy-dom-util';
+
+export const $ = _;
 
 export function registDisableContextMenu (needDisable: Function = () => true) {
     window.addEventListener('contextmenu', (e) => {
@@ -17,15 +19,17 @@ export function registDisableContextMenu (needDisable: Function = () => true) {
 }
 
 export function disableDefaultEvent (e?: Event) {
-    e = e || window.event;
+    e = (e || window.event) as Event;
     e.returnValue = false;
     e.preventDefault();
     return false;
 }
 
-export function onPageShowHide (onshow: Function, onhide: Function) {
+export function onPageShowHide (onshow: Function, onhide?: Function) {
     // 切换后台倒计时停止问题
-    let hidden: string, state: string, visibilityChange: string;
+    let hidden: string,
+        state: 'visibilityState' | 'mozVisibilityState' | 'msVisibilityState' | 'webkitVisibilityState',
+        visibilityChange: string = '';
     if (typeof document.hidden !== 'undefined') {
         hidden = 'hidden';
         visibilityChange = 'visibilitychange';
@@ -45,7 +49,7 @@ export function onPageShowHide (onshow: Function, onhide: Function) {
     }
     const cb = function () {
         if (document[state] === hidden) {
-            onhide();
+            if (onhide)onhide();
         } else {
             onshow();
         }

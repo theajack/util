@@ -1,0 +1,26 @@
+{
+    "name": "tc-util",
+    "version": "0.0.1",
+    "description": "Tool method collection",
+    "main": "tc-util.min.js",
+    "scripts": {},
+    "unpkg": "tc-util.min.js",
+    "jsdelivr": "tc-util.min.js",
+    "typings": "tc-util.min.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/theajack/util.git"
+    },
+    "keywords": [
+        "工具方法"
+    ],
+    "author": "theajack",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/theajack/util/issues"
+    },
+    "dependencies": {
+        "tc-event": "^0.0.6",
+        "easy-dom-util": "^0.0.26"
+    }
+}

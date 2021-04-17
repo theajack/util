@@ -1,23 +1,17 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 11:06:31
- * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 15:45:44
+ * @LastEditors: theajack
+ * @LastEditTime: 2021-04-17 15:28:17
  * @FilePath: \util\src\lib\byte.ts
  * @Description: Coding something
  */
 import {UINT_TYPE} from './constant';
 import {isNumber} from './is';
-import GBK from './gbk';
+import {encodeGBK} from './gbk';
 
-export function stringToBytes (
-    str: string,
-    gbk: boolean = false
-) {
-    if (gbk) {
-        return stringToGbkBytes(str);
-    }
-    const bytes = new Array();
+export function stringToBytes (str: string) {
+    const bytes = [];
     let c;
     const len = str.length;
     for (let i = 0; i < len; i++) {
@@ -38,25 +32,25 @@ export function stringToBytes (
             bytes.push(c & 0xFF);
         }
     }
-    return bytes;
+    return new Uint8Array(bytes);
 }
 
 export function stringToGbkBytes (str: string) {
-    str = GBK.encode(str);
-    const byteArr = new Array();
+    str = encodeGBK(str);
+    const bytes = [];
     for (let i = 0; i < str.length; i++) {
         const ch = str.charAt(i);
         if (ch === '%') {
 		     const num = str.charAt(i + 1) + str.charAt(i + 2);
 		     let result = parseInt(num, 16);
 		     result = result | (-1 << 8);
-		     byteArr.push(result);
+		     bytes.push(result);
 		     i += 2;
         } else {
-            byteArr.push(ch.charCodeAt(0));
+            bytes.push(ch.charCodeAt(0));
         }
     }
-    return byteArr;
+    return new Uint8Array(bytes);
 }
 
 export function bytesToString (uint8arr: Uint8Array) {
@@ -85,7 +79,7 @@ export function bytesToString (uint8arr: Uint8Array) {
 
 export function bytesToNumber (
     uint8arr: Uint8Array,
-    uintType: number|string = UINT_TYPE.U32,
+    uintType: number | string = UINT_TYPE.U32,
     littleEnd: boolean = true
 ) {
     if (uintType === UINT_TYPE.U8) {

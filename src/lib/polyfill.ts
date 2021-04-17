@@ -1,14 +1,14 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 10:24:08
- * @LastEditors: tackchen
- * @LastEditTime: 2021-04-15 11:58:37
+ * @LastEditors: theajack
+ * @LastEditTime: 2021-04-17 16:27:25
  * @FilePath: \util\src\lib\polyfill.ts
  * @Description: Coding something
  */
-import {IJson} from 'src/type/type';
+import {IJson} from '../type/type';
 import {isFunc} from './is';
-import {pickTo} from './util';
+import {pickTo} from './tool';
 
 // 替换 Object.keys 兼容性考虑
 export function keys (json: object) {

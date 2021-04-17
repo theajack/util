@@ -1,5 +1,7 @@
 import {IJson} from '../type/type';
-import {mapArray, mapJson} from './util';
+import {mapArray, mapJson} from './tool';
+import {getStorage, setStorage} from './storage';
+import event, {IEventListener} from 'tc-event';
 
 /* 创建一个简单的事件队列
 let e = creatEventReady();
@@ -145,4 +147,56 @@ export function createState (state: IJson) {
     }
 
     return {get, set, onChange, trigger};
+}
+
+export function createStatus ({
+    def,
+    name,
+    emit
+}: {
+    def: any,
+    name: string,
+    emit: string
+}) {
+    return {
+        _value: null,
+        get (storage?: boolean) {
+            if (storage === true) {
+                return getStorage(name);
+            }
+            if (this._value === null) {
+                const v = getStorage(name);
+                this._value = v === null ? def : v;
+            }
+            return this._value;
+        },
+        set (value: any, save = true, emitThis = true) {
+            this.stash(value, false);
+            if (save) {
+                this.save();
+            }
+            this.emit(emitThis);
+        },
+        emit (emitThis = true) {
+            if (emit && emitThis)
+                event.emit(emit, this._value);
+        },
+        stash (value: any, emitThis = true) {
+            this._value = value;
+            this.emit(emitThis);
+        },
+        listen (listener: IEventListener, once: boolean = false) {
+            event.regist(emit, {
+                immediate: false,
+                once,
+                listener
+            });
+        },
+        save () {
+            setStorage(name, this._value);
+        },
+        init (value: any, save = false) {
+            this.set(value || this.get(), save);
+        }
+    };
 }

@@ -1,7 +1,7 @@
 const storage = window.localStorage;
 const ADDON = '_tc_u';
 
-export function read (key: string) {
+export function getStorage (key: string) {
     key += ADDON;
     let value = storage.getItem(key);
     if (value === null) {
@@ -18,7 +18,7 @@ export function read (key: string) {
     }
     return value;
 }
-export function write (key: string, value: any) {
+export function setStorage (key: string, value: any) {
     key += ADDON;
     const type = typeof value;
     if (type === 'object') {
@@ -30,7 +30,7 @@ export function write (key: string, value: any) {
     storage.setItem(key, value);
 }
 
-export function remove (key: string) {
+export function removeStorage (key: string) {
     key += ADDON;
     storage.removeItem(key);
 }

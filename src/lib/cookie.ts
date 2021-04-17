@@ -42,3 +42,7 @@ export function setCookie (
         return name + '=' + value;
     }
 }
+
+export function removeCookie (name: string) {
+    return setCookie(name, '', -1);
+}

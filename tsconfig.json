@@ -16,6 +16,8 @@
         "esModuleInterop": true,
         "removeComments": false,
         "jsx": "preserve",
+        // "jsx": "react",
+        "noEmit": false,
         "lib": ["esnext", "dom"],
         // "types": ["jest", "puppeteer", "node"],
         "rootDir": ".",
@@ -24,9 +26,10 @@
         // }
     },
     "include": [
-        "./src/*"
-, "src/type/type.d.ts"    ],
+        "./src/*",
+        "src/type/type.d.ts"    
+, "src/type/main.d.ts", "webpack-config/build.js"    ],
     "exclude": [
-        "./node_modules"
+        "node_modules"
     ]
 }

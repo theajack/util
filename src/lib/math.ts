@@ -1,8 +1,8 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 11:19:36
- * @LastEditors: tackchen
- * @LastEditTime: 2021-04-16 18:05:52
+ * @LastEditors: theajack
+ * @LastEditTime: 2021-04-17 12:39:17
  * @FilePath: \util\src\lib\math.ts
  * @Description: Coding something
  */
