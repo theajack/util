@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 10:31:46
  * @LastEditors: tackchen
- * @LastEditTime: 2021-04-16 17:55:07
+ * @LastEditTime: 2021-04-23 16:51:36
  * @FilePath: \util\src\lib\datetime.ts
  * @Description: 日期相关api
  */
@@ -174,4 +174,81 @@ export function minuteToMs (value: number) {
 }
 export function hourToMs (value: number) {
     return minuteToMs(value * 60);
+}
+
+export function createTimeTick ({
+    key = '',
+    useStorage = false,
+    onTimeRunOut = () => {},
+    autoStart = true,
+    time = 10,
+    intervalTime = 1000,
+}) {
+    let totalUseTimeKey = '_tt_total_use';
+    if (useStorage) {
+        window.addEventListener('beforeunload', markTotalUseTime, false);
+    }
+    if (key) {
+        totalUseTimeKey = `${key}${totalUseTimeKey}`;
+    }
+    let targetTime = 0;
+    let startTime = getNowTime();
+
+    function getNowTime () {
+        return new Date().getTime();
+    }
+
+    let interval = 0;
+
+    function markTotalUseTime () {
+        if (!useStorage) return;
+        const thisUseTime = getNowTime() - startTime;
+        const str = localStorage.getItem(totalUseTimeKey);
+        let totalUseTime = thisUseTime;
+        if (str) {
+            const lastTotalUseTime = parseInt(str);
+            totalUseTime += lastTotalUseTime;
+        }
+        localStorage.setItem(totalUseTimeKey, totalUseTime + '');
+    }
+
+    function getTotalUseTime () {
+        if (!useStorage) return 0;
+        const str = localStorage.getItem(totalUseTimeKey);
+        return str ? parseInt(str) : 0;
+    }
+
+    function timeOut (limitTime: number) {
+        clearInterval(interval);
+        if (useStorage) {
+            window.removeEventListener('beforeunload', markTotalUseTime, false);
+            localStorage.setItem(totalUseTimeKey, limitTime + '');
+        }
+        onTimeRunOut();
+    }
+
+    function tick () {
+        const limitTime = time * 1000;
+        const totalUseTime = getTotalUseTime();
+        if (limitTime <= totalUseTime) {
+            timeOut(limitTime);
+            return;
+        }
+        startTime = getNowTime();
+        targetTime = startTime + limitTime - totalUseTime;
+
+        clearInterval(interval);
+        interval = window.setInterval(() => {
+            const nowTime = getNowTime();
+            if (nowTime >= targetTime) {
+                timeOut(limitTime);
+            }
+        }, intervalTime);
+    }
+
+    if (autoStart) {
+        tick();
+        return null;
+    }
+    return tick;
 }
