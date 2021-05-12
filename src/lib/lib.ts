@@ -11,20 +11,21 @@ e.onEventReady((...args)=>{
 e.eventReady(1,2,3)
 */
 
-interface IEventReady {
-    onEventReady(fn: Function, ...args: any[]): void;
-    eventReady(...args: any[]): void;
+interface IEventReady<T = any> {
+    onEventReady(fn: (...args: T[])=>void, ...args: T[]): Function;
+    eventReady(...args: T[]): void;
+    removeListener(fn: Function): void;
 }
 
-export function creatEventReady (): IEventReady {
+export function creatEventReady<T = any> (): IEventReady<T> {
 
     const queue: {
         fn: Function;
-        args: any;
+        args: T[];
     }[] = [];
-    let lastArgs: any = null;
+    let lastArgs: T[] | null = null;
 
-    function onEventReady (fn: Function, ...args: any[]) {
+    function onEventReady (fn: (...args: T[])=>void, ...args: T[]) {
         if (!queue.find(item => item.fn === fn)) {
             queue.push({fn, args});
         }
@@ -34,19 +35,28 @@ export function creatEventReady (): IEventReady {
             }
             fn(...args);
         }
+
+        return fn;
     }
      
-    function eventReady (...args: any[]) {
+    function eventReady (...args: T[]) {
         lastArgs = args;
         queue.forEach(item => {
             item.fn(...((args.length === 0) ? item.args : args));
         });
-        // queue = null;
+    }
+
+    function removeListener (listener: Function) {
+        const result = queue.find(item => item.fn === listener);
+        if (result) {
+            queue.splice(queue.indexOf(result), 1);
+        }
     }
 
     return {
         onEventReady,
-        eventReady
+        eventReady,
+        removeListener,
     };
 }
 
@@ -133,7 +143,7 @@ export function createState (state: IJson) {
         });
     }
     function onChange (name: string | object, fn: Function) {
-        mapJson(name, fn, (name: string, fn: Function) => {
+        mapJson(name, fn, (name: string, fn: (...args: any[])=>void) => {
             if (!checkNecessary(name)) {return;}
             calls[name].onEventReady(fn);
         });
