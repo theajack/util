@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-04-15 11:01:35
  * @LastEditors: theajack
- * @LastEditTime: 2021-04-17 15:26:05
+ * @LastEditTime: 2021-05-19 21:55:47
  * @FilePath: \util\src\index.ts
  * @Description: Coding something
  */
@@ -20,7 +20,7 @@ import * as _byte from './lib/byte';
 import _event from 'tc-event';
 import _version from './version';
 import {encodeGBK, decodeGBK} from './lib/gbk';
-import {getStorage, setStorage, removeStorage} from './lib/storage';
+import _storage from './lib/storage';
 import {getCookie, setCookie, removeCookie} from './lib/cookie';
 
 export const _ = __;
@@ -35,7 +35,7 @@ export const extend = _extend;
 export const byte = _byte;
 export const event = _event;
 export const gbk = {encode: encodeGBK, decode: decodeGBK};
-export const storage = {get: getStorage, set: setStorage, remove: removeStorage};
+export const storage = _storage;
 export const cookie = {get: getCookie, set: setCookie, remove: removeCookie};
 
 console.log(byte);

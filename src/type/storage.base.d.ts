@@ -1,6 +1,19 @@
+import {IJson} from './type';
 
 
-export function getStorage (key: string): any;
-export function setStorage (key: string, value: any): void;
+export interface IStorage {
+    (key: string | IJson, value?: any): any;
+    useLocalStorage(): void;
+    useSessionStorage(): void;
+    geneKey(key: string): string;
+    parseKey(key: string): string;
+    parseValue(value: string): any;
+    write(key: string, value: any): void;
+    read(key: string): any;
+    readAll(): IJson;
+    remove(key: string): void;
+    clear(): void;
+}
 
-export function removeStorage (key: string): void;
+declare const storage: IStorage;
+export default storage;
