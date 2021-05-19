@@ -98,7 +98,7 @@ function clear () {
 
 export default function storage (key, value) {
     if (typeof key === 'object' && key !== null) {
-        for (var k in key) storage(k, key[k]);
+        for (const k in key) storage(k, key[k]);
         return;
     }
     if (typeof value === 'undefined') {

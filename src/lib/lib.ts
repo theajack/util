@@ -11,43 +11,68 @@ e.onEventReady((...args)=>{
 e.eventReady(1,2,3)
 */
 
+interface IEventReadyListener<T> {
+    (...args: T[]): void
+}
+
+interface IEventReadyOption<T> {
+    once?: boolean;
+    after?: boolean;
+    listener: IEventReadyListener<T>;
+}
 interface IEventReady<T = any> {
-    onEventReady(fn: (...args: T[])=>void, ...args: T[]): Function;
+    onEventReady(option: IEventReadyListener<T> | IEventReadyOption<T>, ...args: T[]): IEventReadyListener<T>;
     eventReady(...args: T[]): void;
     removeListener(fn: Function): void;
 }
 
+
 export function creatEventReady<T = any> (): IEventReady<T> {
 
     const queue: {
-        fn: Function;
+        listener: IEventReadyListener<T>;
         args: T[];
+        once: boolean;
     }[] = [];
     let lastArgs: T[] | null = null;
 
-    function onEventReady (fn: (...args: T[])=>void, ...args: T[]) {
-        if (!queue.find(item => item.fn === fn)) {
-            queue.push({fn, args});
+    function onEventReady (option: IEventReadyListener<T> | IEventReadyOption<T>, ...args: T[]) {
+        let once = false, after = false;
+        let listener: IEventReadyListener<T>;
+        if (typeof option === 'object') {
+            if (typeof option.once === 'boolean') once = option.once;
+            if (typeof option.after === 'boolean') after = option.after;
+            listener = option.listener;
+        } else {
+            listener = option;
         }
-        if (lastArgs !== null) {
+
+        if (!queue.find(item => item.listener === listener)) {
+            queue.push({listener, args, once});
+        }
+        if (lastArgs !== null && !after) {
             if (args.length === 0 && lastArgs) {
                 args = lastArgs;
             }
-            fn(...args);
+            listener(...args);
+            if (once) removeListener(listener);
         }
 
-        return fn;
+        return listener;
     }
      
     function eventReady (...args: T[]) {
         lastArgs = args;
         queue.forEach(item => {
-            item.fn(...((args.length === 0) ? item.args : args));
+            item.listener(...((args.length === 0) ? item.args : args));
+            if (item.once) {
+                removeListener(item.listener);
+            }
         });
     }
 
     function removeListener (listener: Function) {
-        const result = queue.find(item => item.fn === listener);
+        const result = queue.find(item => item.listener === listener);
         if (result) {
             queue.splice(queue.indexOf(result), 1);
         }
