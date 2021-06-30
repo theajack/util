@@ -1,8 +1,8 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 11:01:35
- * @LastEditors: theajack
- * @LastEditTime: 2021-05-19 21:55:47
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-07-01 00:21:31
  * @FilePath: \util\src\index.ts
  * @Description: Coding something
  */
@@ -37,8 +37,6 @@ export const event = _event;
 export const gbk = {encode: encodeGBK, decode: decodeGBK};
 export const storage = _storage;
 export const cookie = {get: getCookie, set: setCookie, remove: removeCookie};
-
-console.log(byte);
 
 export default {
     _,

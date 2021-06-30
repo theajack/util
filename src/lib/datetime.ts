@@ -1,8 +1,8 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 10:31:46
- * @LastEditors: tackchen
- * @LastEditTime: 2021-04-23 16:51:36
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-07-01 00:20:58
  * @FilePath: \util\src\lib\datetime.ts
  * @Description: 日期相关api
  */
@@ -75,7 +75,7 @@ export function formatDate ({
         date = new Date(date);
     }
     if (date instanceof Date) {
-        date = dateToJson();
+        date = dateToJson(date);
     }
     const replacers: {
         [prop in TDateTime]: string | RegExp
