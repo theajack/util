@@ -9,9 +9,10 @@ e.onEventReady((...args)=>{
 e.eventReady(1,2,3)
 */
 
-interface IEventReady {
-    onEventReady(fn: Function, ...args: any[]): void;
-    eventReady(...args: any[]): void;
+interface IEventReady<T = any> {
+    onEventReady(fn: (...args: T[])=>void, ...args: T[]): Function;
+    eventReady(...args: T[]): void;
+    removeListener(fn: Function): void;
 }
 
 export function creatEventReady(): IEventReady;
