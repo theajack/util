@@ -1,9 +1,9 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 11:01:35
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-07-01 00:21:31
- * @FilePath: \util\src\index.ts
+ * @LastEditors: tackchen
+ * @LastEditTime: 2021-12-31 08:17:06
+ * @FilePath: /util/src/index.ts
  * @Description: Coding something
  */
 
@@ -17,6 +17,7 @@ import * as _const from './lib/constant';
 import * as _dom from './lib/dom';
 import * as _extend from './lib/extend';
 import * as _byte from './lib/byte';
+import _md5 from './lib/md5';
 import _event from 'tc-event';
 import _version from './version';
 import {encodeGBK, decodeGBK} from './lib/gbk';
@@ -37,6 +38,7 @@ export const event = _event;
 export const gbk = {encode: encodeGBK, decode: decodeGBK};
 export const storage = _storage;
 export const cookie = {get: getCookie, set: setCookie, remove: removeCookie};
+export const md5 = _md5;
 
 export default {
     _,
@@ -53,5 +55,6 @@ export default {
     cookie,
     byte,
     gbk,
+    md5,
     _version
 };

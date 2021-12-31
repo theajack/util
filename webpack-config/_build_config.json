@@ -43,6 +43,10 @@
         "file": "math",
         "path": "src/lib/__export__/__math__.ts"
     },
+    "tcMd5": {
+        "file": "md5",
+        "path": "src/lib/__export__/__md5__.ts"
+    },
     "tcPolyfill": {
         "file": "polyfill",
         "path": "src/lib/__export__/__polyfill__.ts"

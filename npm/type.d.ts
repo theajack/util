@@ -1,9 +1,9 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 11:05:16
- * @LastEditors: theajack
- * @LastEditTime: 2021-04-17 12:05:00
- * @FilePath: \util\src\type\type.d.ts
+ * @LastEditors: tackchen
+ * @LastEditTime: 2021-12-31 08:10:32
+ * @FilePath: /util/src/type/type.d.ts
  * @Description: Coding something
  */
 
@@ -49,3 +49,13 @@ export interface ISize {
 }
 
 export type TDateTime = 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second' | 'microsecond';
+
+export interface ICookieSetOption {
+    path?: string;
+    domain?: string;
+    secure?: boolean; // default: false
+    sameSite?: 'Lax' | 'Strict' | 'None'; // default: Lax
+    priority?: 'Low' | 'Medium' | 'High'; // default: Medium
+    sameParty?: boolean; // default: false
+    expires?: Date | number; // default is session
+}

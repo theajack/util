@@ -10,7 +10,7 @@ import _extend from './extend';
 import _byte from './byte';
 import _event from 'tc-event';
 import _gbk from './gbk';
-import {getStorage, setStorage, removeStorage} from './storage';
+import _storage from './storage';
 import {getCookie, setCookie, removeCookie} from './cookie';
 
 export const _: typeof __;
@@ -25,11 +25,7 @@ export const extend: typeof _extend;
 export const byte: typeof _byte;
 export const event: typeof _event;
 export const gbk: typeof _gbk;
-export const storage: {
-    get: typeof getStorage;
-    set: typeof setStorage;
-    remove: typeof removeStorage;
-};
+export const storage: typeof _storage;
 export const cookie: {
     get: typeof getCookie;
     set: typeof setCookie;

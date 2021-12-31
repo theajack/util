@@ -1,6 +1,6 @@
 {
     "name": "tc-util",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Tool method collection",
     "main": "tc-util.min.js",
     "scripts": {},

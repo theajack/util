@@ -1,6 +1,5 @@
 import {IJson} from './type';
 
-
 export interface IStorage {
     (key: string | IJson, value?: any): any;
     useLocalStorage(): void;

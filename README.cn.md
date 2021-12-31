@@ -53,6 +53,7 @@
 12. storage
 13. tool
 14. event
+15. md5
 
 ### 1. 安装使用
 
@@ -240,3 +241,7 @@ import {formatDate} from 'tc-util/datetime';
 #### 2.14. event
 
 请参考 [tc-util](https://github.com/theajack/util)
+
+#### 2.15 md5
+
+0. md5
