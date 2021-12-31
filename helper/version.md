@@ -11,3 +11,9 @@
 ### 0.0.3
 
 修复`datetime`模块的`formatDate`方法 date 参数无效的bug
+
+### 0.0.4
+
+1. 修改cookie方法
+2. 增加md5模块
+3. 修复storage声明文件

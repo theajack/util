@@ -1,9 +1,9 @@
 /*
  * @Author: tackchen
  * @Date: 2021-04-15 10:31:46
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-07-01 00:20:58
- * @FilePath: \util\src\lib\datetime.ts
+ * @LastEditors: tackchen
+ * @LastEditTime: 2021-12-31 08:34:06
+ * @FilePath: /util/src/lib/datetime.ts
  * @Description: 日期相关api
  */
 
@@ -67,10 +67,10 @@ export function formatDate ({
     date = new Date(),
     customReplacers,
 }: {
-    template: string,
-    date: {[prop in TDateTime]?: number} | Date | number,
+    template?: string,
+    date?: {[prop in TDateTime]?: number} | Date | number,
     customReplacers?: {[prop in TDateTime]?: string | RegExp}
-}) {
+} = {}) {
     if (typeof date === 'number') {
         date = new Date(date);
     }

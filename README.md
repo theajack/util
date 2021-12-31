@@ -16,7 +16,7 @@
 
 <h3>Some commonly used tools and methods</h3>
 
-**[中文](https://github.com/theajack/util/blob/master/README.cn.md) | [Update Log](https://github.com/theajack/util/blob/master/helper/version.md) | [Feedback bug](https://github.com/theajack/util/issues/new) | [Gitee](https://gitee.com/theajack/util)**
+**[中文](https://github.com/theajack/util/blob/master/README.cn.md) [Online Use](https://theajack.gitee.io/jsbox?github=theajack.util) | | [Update Log](https://github.com/theajack/util/blob/master/helper/version.md) | [Feedback bug](https://github.com/theajack/util/issues/new) | [Gitee](https://gitee.com/theajack/util)**
 
 ---
 

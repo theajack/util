@@ -33,7 +33,7 @@
 
 <h3>一些常用的工具方法</h3>
 
-**[English](https://github.com/theajack/util/blob/master/README.md) | [Update Log](https://github.com/theajack/util/blob/master/helper/version.md) | [Feedback bug](https://github.com/theajack/util/issues/new) | [Gitee](https://gitee.com/theajack/util)**
+**[English](https://github.com/theajack/util/blob/master/README.md) | [在线使用](https://theajack.gitee.io/jsbox?github=theajack.util) | [更新日志](https://github.com/theajack/util/blob/master/helper/version.md) | [问题反馈](https://github.com/theajack/util/issues/new) | [Gitee](https://gitee.com/theajack/util)**
 
 ---
 
